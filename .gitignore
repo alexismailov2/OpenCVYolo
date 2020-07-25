@@ -1,0 +1,7 @@
+.idea
+cmake-build-debug
+cmake-build-release
+build
+data
+models/standard/*.weights
+models/standard/*.h5

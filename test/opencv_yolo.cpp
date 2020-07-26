@@ -1,4 +1,4 @@
-#include "YOLOv3.hpp"
+#include <opencv_yolo/YOLOv3.hpp>
 
 #include <opencv2/opencv.hpp>
 #include <opencv2/highgui.hpp>
@@ -7,10 +7,7 @@
 #include <iostream>
 #include <vector>
 
-#include "TimeMeasuring.hpp"
-
-#define FULL_YOLOV3 1
-#define FULL_YOLOV4 0 // unfourtunately does not work because OpenCV does not support mish activation
+#include "../../TimeMeasuring.hpp"
 
 namespace {
 void draw(cv::Mat& frame,
@@ -40,22 +37,10 @@ auto main(int argc, char** argv) -> int32_t
    cv::VideoCapture cap;
    cap.open(argv[1]);
 
-#if FULL_YOLOV3
    auto yolov3 = YOLOv3{"./models/standard/yolov3.cfg",
                         "./models/standard/yolov3.weights",
                         "./models/standard/coco.names",
                         cv::Size{608, 608}, 0.3f, 0.3f};
-#elif FULL_YOLOV4
-   auto yolov3 = YOLOv3{"./models/yolov4/yolov4.cfg",
-                        "./models/yolov4/yolov4.weights",
-                        "./models/yolov4/coco.names",
-                        cv::Size{608, 608}, 0.3f, 0.3f};
-#else
-   auto yolov3 = YOLOv3{"./models/wilderperson/yolov3-tiny.cfg",
-                        "./models/wilderperson/yolov3-tiny_14000.weights",
-                        "./models/wilderperson/_.names",
-                        cv::Size{416, 416}, 0.3f, 0.3f};
-#endif
 
    cv::Mat frame;
    while (cv::waitKey(1) < 0)

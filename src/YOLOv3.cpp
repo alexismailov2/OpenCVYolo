@@ -1,4 +1,4 @@
-#include "YOLOv3.hpp"
+#include <opencv_yolo/YOLOv3.hpp>
 
 #include "TimeMeasuring.hpp"
 
@@ -39,11 +39,23 @@ YOLOv3::YOLOv3(std::string const& modelFile,
    , _nmsThreshold{nmsThreshold}
    , _net{cv::dnn::readNetFromDarknet(modelFile, weightsFile)}
 {
-   std::cout << "Loaded config file: " << modelFile << std::endl;
    _net.setPreferableBackend(::cv::dnn::DNN_BACKEND_CUDA);
    _net.setPreferableTarget(::cv::dnn::DNN_TARGET_CUDA);
-//   _net.setPreferableBackend(::cv::dnn::DNN_BACKEND_DEFAULT);
-//   _net.setPreferableTarget(::cv::dnn::DNN_TARGET_CPU);
+}
+
+YOLOv3::YOLOv3(std::string const& modelFile,
+               std::string const& classesFile,
+               cv::Size inputSize,
+               float confThreshold,
+               float nmsThreshold)
+  : _classes{readClasses(classesFile)}
+  , _inputSize{inputSize}
+  , _confThreshold{confThreshold}
+  , _nmsThreshold{nmsThreshold}
+  , _net{cv::dnn::readNet(modelFile)}
+{
+  _net.setPreferableBackend(::cv::dnn::DNN_BACKEND_CUDA);
+  _net.setPreferableTarget(::cv::dnn::DNN_TARGET_CUDA);
 }
 
 auto YOLOv3::performPrediction(cv::Mat const &frame,

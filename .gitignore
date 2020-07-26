@@ -3,5 +3,6 @@ cmake-build-debug
 cmake-build-release
 build
 data
+host
 models/standard/*.weights
 models/standard/*.h5

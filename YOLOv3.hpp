@@ -22,6 +22,13 @@ public:
            float confidenceThreshold = 0.25f,
            float nmsThreshold = 0.25f);
 
+    YOLOv3(std::string const& modelFile,
+           std::string const& classesFile,
+           std::vector<std::vector<uint32_t>> const& anchorsList,
+           cv::Size inputSize,
+           float confidenceThreshold = 0.25f,
+           float nmsThreshold = 0.25f);
+
     auto performPrediction(cv::Mat const& frame,
                            std::function<bool(std::string const&)>&& filter = [](std::string const&) { return true; },
                            bool isNeededToBeSwappedRAndB = true) -> Item::List;
@@ -32,6 +39,7 @@ private:
                      std::function<bool(std::string const&)>&& filter) const -> Item::List;
 
 private:
+    std::vector<std::vector<uint32_t>> _anchorsList;
     std::vector<std::string> _classes;
     cv::Size                 _inputSize;
     float                    _confThreshold;

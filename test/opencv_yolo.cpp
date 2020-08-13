@@ -7,7 +7,7 @@
 #include <iostream>
 #include <vector>
 
-#include "../../TimeMeasuring.hpp"
+#include "../src/TimeMeasuring.hpp"
 
 namespace {
 void draw(cv::Mat& frame,

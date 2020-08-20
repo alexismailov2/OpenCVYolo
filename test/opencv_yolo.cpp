@@ -6,6 +6,7 @@
 
 #include <iostream>
 #include <vector>
+#include <experimental/filesystem>
 
 #include "../src/TimeMeasuring.hpp"
 
@@ -25,35 +26,68 @@ void draw(cv::Mat& frame,
 
 auto main(int argc, char** argv) -> int32_t
 {
-   if (argc != 2)
+   if (argc != 6)
    {
       std::cout << "Should be provided video file as input!" << std::endl;
       return 0;
    }
 
-   static const std::string kWinName = "Stop COVOID19! Make this world heatlhy!!!";
+   auto yolov3 = YOLOv3{argv[2],
+                        argv[3],
+                        argv[4],
+                        cv::Size{atoi(argv[5]), atoi(argv[5])}, 0.3f, 0.3f};
+
+   static const std::string kWinName = "OpenCV YOLOv3 Demo";
    cv::namedWindow(kWinName, cv::WINDOW_NORMAL);
+
+   if (std::experimental::filesystem::is_directory(argv[1]))
+   {
+      cv::VideoWriter video("outcpp.avi",
+                            cv::VideoWriter::fourcc('M','J','P','G'),
+                            10, cv::Size(atoi(argv[5]), atoi(argv[5])));
+
+      for (auto file : std::experimental::filesystem::directory_iterator(argv[1]))
+      {
+         auto filePath = file.path().string();
+         cv::Mat frame = cv::imread(filePath);
+         if (frame.empty() || (cv::waitKey(1) == 27))
+         {
+            break;
+         }
+         draw(frame, yolov3.performPrediction(frame), cv::Scalar{0x00, 0xFF, 0x00}, 2);
+         imshow(kWinName, frame);
+         cv::resize(frame, frame, cv::Size(atoi(argv[5]), atoi(argv[5])));
+         video.write(frame);
+         cv::waitKey(100);
+      }
+      video.release();
+      cv::destroyAllWindows();
+      return 0;
+   }
 
    cv::VideoCapture cap;
    cap.open(argv[1]);
 
-   auto yolov3 = YOLOv3{"./models/standard/yolov3.cfg",
-                        "./models/standard/yolov3.weights",
-                        "./models/standard/coco.names",
-                        cv::Size{608, 608}, 0.3f, 0.3f};
+   cv::VideoWriter video("outcpp.avi",
+                         cv::VideoWriter::fourcc('M','J','P','G'),
+                         10,
+                         cv::Size(static_cast<int32_t>(cap.get(cv::CAP_PROP_FRAME_WIDTH)),
+                                  static_cast<int32_t>(cap.get(cv::CAP_PROP_FRAME_HEIGHT))));
 
    cv::Mat frame;
    while (cv::waitKey(1) < 0)
    {
       TAKEN_TIME();
       cap >> frame;
-      if (frame.empty())
+      if (frame.empty() || (cv::waitKey(1) == 27))
       {
-         cv::waitKey();
          break;
       }
       draw(frame, yolov3.performPrediction(frame), cv::Scalar{0x00, 0xFF, 0x00}, 2);
+      video.write(frame);
       imshow(kWinName, frame);
    }
+
+   cv::destroyAllWindows();
    return 0;
 }

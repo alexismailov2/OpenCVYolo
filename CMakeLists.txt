@@ -25,6 +25,9 @@ add_library(${PROJECT_NAME}
         src/YOLOv3.cpp
         src/TimeMeasuring.hpp)
 
+target_link_libraries(${PROJECT_NAME}
+        ${OpenCV_LIBS})
+
 set_target_properties(${PROJECT_NAME} PROPERTIES PUBLIC_HEADER "${${PROJECT_NAME}_PUBLIC_INCLUDES}")
 
 install(TARGETS ${PROJECT_NAME}

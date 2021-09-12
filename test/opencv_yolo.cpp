@@ -47,13 +47,13 @@ auto main(int argc, char** argv) -> int32_t
    static const std::string kWinName = "OpenCV YOLOv3 Demo";
    cv::namedWindow(kWinName, cv::WINDOW_NORMAL);
 
-   if (std::experimental::filesystem::is_directory(argv[1]))
+   if (fs::is_directory(argv[1]))
    {
       cv::VideoWriter video("outcpp.avi",
                             cv::VideoWriter::fourcc('M','J','P','G'),
                             10, cv::Size(atoi(argv[5]), atoi(argv[5])));
 
-      for (auto file : std::experimental::filesystem::directory_iterator(argv[1]))
+      for (auto file : fs::directory_iterator(argv[1]))
       {
          auto filePath = file.path().string();
          cv::Mat frame = cv::imread(filePath);
